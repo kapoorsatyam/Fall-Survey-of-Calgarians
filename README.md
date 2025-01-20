@@ -36,7 +36,6 @@ The dataset used is from the **City of Calgary's 2023 Fall Survey**, conducted b
 
 For more details, refer to:
 - [Fall Survey of Calgarians - Newsroom](https://newsroom.calgary.ca/fall-survey-of-calgarians-shows-satisfaction-with-city/)
-- [Survey Dataset PDF](https://www.calgary.ca/content/dam/www/cfod/csc/documents/cit-sat/cit-sat-2023/2023-fall-survey-of-calgarians.pdf)
 
 ---
 
@@ -69,9 +68,3 @@ Two-sample proportion tests were performed to compare the proportions of agreeme
 - **Confidence Intervals**: Estimations provided insights into the agreement levels with the survey questions.
 - **Hypothesis Testing**: Statistical comparisons highlighted significant differences in citizens' sentiments across different aspects of governance.
 
----
-
-## References
-1. City of Calgary Fall Survey of Calgarians - [Newsroom Link](https://newsroom.calgary.ca/fall-survey-of-calgarians-shows-satisfaction-with-city/)
-2. 2023 Fall Survey Dataset - [PDF Link](https://www.calgary.ca/content/dam/www/cfod/csc/documents/cit-sat/cit-sat-2023/2023-fall-survey-of-calgarians.pdf)
-3. Additional statistical methodologies discussed in class materials.
