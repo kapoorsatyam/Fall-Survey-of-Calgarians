@@ -1,0 +1,839 @@
+---
+title: "Calgary Connects: Decoding Citizen Input, DATA 602"
+author: "Satyam Kapoor"
+#date: "2024-10-12"
+output:
+  pdf_document:
+    latex_engine: xelatex
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+library(readr)
+library(dplyr)
+library(mosaic)
+Calgary_Fall_Survey = read_csv("Fall_Survey_of_Calgarians_2023.csv")
+```
+
+## AGENDA
+
+ - Explain the purpose and motivation behind the analysis.
+ - Elaborate on the data set, comment on it's reliability, discuss the data collection process and its challenges.
+ - To perform an exploratory data analysis (EDA) to visualize the proportion of responses gathered by the survey data.
+ - To compute the data on various hypothesis through statistical analysis and provide reasoning for the findings.
+ - Conclude our findings from each part of the statistical analysis
+ - Comment on learnings
+ - Provide relevant references.
+
+## PURPOSE/MOTIVATION
+
+Surveys are mainly conducted to gather feedback from the citizens, to understand people’s needs and to take actions to improve their experiences.
+
+Every year, the City of Calgary collects data in multiple ways including surveys, focus groups and in-depth interviews with Calgarians to understand citizen’s opinions and help them prioritize or make decisions regarding the City’s services, policies and plans.
+
+These surveys help include the citizens in decision making processes and help assure leaders and the public that the decisions made reflect the needs of Calgarians. In most cases, the participants are selected at random, to ensure proper representation of the population and hear from a variety of Calgarians. 
+
+After going through numerous data sets and discussing which would be the most appropriate for this project, the City of Calgary's "2023 Fall Survey of Calgarians" data that studies how Calgarians feel about their City has been chosen. 
+
+This data set primarily focuses on investigating Calgarians sentiment towards the City of Calgary. Local government spending impacts all of us, and everyone would agree that it is paramount for the government to make good use of taxpayers money. We were motivated by some of the examples discussed in class that involve the local government, their decisions and the citizens support or lack thereof. 
+
+## DATA COLLECTION
+
+The data collection was the most tedious process in the analysis. Some important factors that were considered during the data collection process were:
+
+1) The data set should not be time-series (the data does not change with time) 
+
+2) The data set should be reliable (i.e) The data set was not artificially generated 
+
+3) The data set should be transparent about their data collection processes to ensure working on genuinely random sample 
+
+4) The data set has to be about a sample and not a population to extend our findings to the greater population.
+
+Every step of the selection process was a challenge and finding the appropriate data set was a serious task. Luckily, we found what we were looking for in the City of Calgary's website. This data set contains information on citizen satisfaction involving the City's performance on different areas.
+
+\vspace{0.4cm}
+
+The **City’s Fall Survey of Calgarians** is a telephone survey conducted by Ipsos Public affairs from August 2, 2023 to September 4, 2023 with a randomly selected sample of 2500 Calgarians aged 18 years and older. While the latest Calgary survey was conducted in the spring of 2024, the latest available public data set is from the Fall of 2023. The survey was conducted majorly by phone calls, 60% land-line and the remaining through cellphone with the goal of obtaining a random and statistically representative sample of Calgarians. The survey is considered to have a margin of error of plus/ minus 2% for the total sample (i.e) 19 times out of 20. For more information on how this sample was gathered visit:
+
+*https://newsroom.calgary.ca/fall-survey-of-calgarians-shows-satisfaction-with-city/*
+
+OR
+
+*https://www.calgary.ca/content/dam/www/cfod/csc/documents/cit-sat/cit-sat-2023/2023-fall-survey-of-calgarians.pdf*
+
+\vspace{0.4cm}
+
+Some **advantages** of this sample (data set) include the following:
+
+a) a large sample size of 2500 citizens 
+b) a random sample that combines 60% land-lines and 40% cellphones helps gather a representative sample while being able to reach farther regions of the City compared to in-person. 
+c) a margin of error of 2% makes this data trustworthy 
+d) weighted data based on demographics gives a better representation of Calgarians 
+
+Some **disadvantages:** 
+
+a) while conducting a survey by phone allows for a wide reach, phone might not be the preferred method for most Calgarians, specially land-lines. 
+b) with surveys like these, there will always be the problem of people who do not wish to take the survey, which could have an impact when generalizing our results
+c) this is a long survey and many people might not have the time to respond to all questions, therefore the initial questions might be more representative to the population than the last ones.
+d) chances of participants skipping answers or quitting in the middle is considerable
+
+It is interesting that the survey was conducted via telephone. While there is no explicit mention of the exact way this was conducted there are a few points worth mentioning. If it was conducted by a person on the phone, it might be beneficial due to the personal interaction between surveyor and surveyed, but it is more costly than an online survey and more tedious since each result has to be entered by hand (which could also introduce input errors). On the other hand, if it was an automated phone survey it would be less expensive and more reliable as far as inputting responses but it would be easier for participants to skip through questions rapidly disregarding the value that comes with each response
+
+In order to get a better understanding of the opinions of Calgarians towards City-Citizen participation/collaboration, the analysis focused on 3 questions instead of 1. The three survey questions that better represent our problem of interest are the following:
+
+**Thinking about your personal dealings with The City of Calgary, your general impressions and anything you may have read, seen or heard, please tell me whether you agree or disagree with each of the following statements about The City? **
+
+a) The City used input from Calgarians in decision-making about City projects and services.
+b) The City allows citizens to have meaningful input into decision-making.
+c) The City of Calgary practices open and accessible government. 
+
+Each participant was given the option to respond to these questions on a scale from 1 to 6.
+
+1 = Strongly disagree
+
+2 = Somewhat disagree
+
+3 = Somewhat agree
+
+4 = Strongly agree
+
+5 = Don't know
+
+6 = Don't know / Not sure
+
+For the purpose of this project and to be able to take a Binomial approach, we grouped these responses into two categories. The first category will be responses 3 and 4, which indicate that the respondents agree to the question, and the second category will be the complement of agreeing, or 'don't agree', which will group responses 1, 2, 5 and 6. It is important to note that the complement of agreeing IS NOT the same as the proportion who disagrees since we are also grouping the 'don't know' responses in that category. 
+
+Our **population** is defined as all the people residing in Calgary in the Fall of 2023.
+
+Our **variable of interest** are the responses to each one of the three proposed questions.
+
+Our **parameter** is the estimated population proportion of Calgarians who agree with each one of the three questions. 
+
+The statistical inference procedures chosen for this report are confidence interval estimation and hypotheses tests (we are including a one sample hypothesis test and a two-sample test for comparing two population proportions). If the latter count as two, then we would ask Dr. Chen to grade the Confidence interval estimation and the One Sample Hypothesis Test. 
+
+## EDA
+
+The first step is data cleaning and see if there are any incomplete entries. 
+```{r}
+survey = Calgary_Fall_Survey
+
+survey[is.na(survey$q19_5), ]
+survey[is.na(survey$q19_7), ]
+survey[is.na(survey$q19_8), ]
+```
+
+Now that there are no missing values, the variable of interest (each one of the three questions) can be accessed. 
+
+To obtain this, three arrays were created from the data set to analyze the variable of interest,(i.e) respondents' agreement with the following statements:
+
+1 (q19_5): The City of Calgary practices open and accessible government.
+
+2 (q19_7): The City allows citizens to have meaningful input into decision-making.
+
+3 (q19_8): The City used input from Calgarians in decision-making about City projects and services.
+
+```{r}
+OpenAccQ = survey["q19_5"]
+CitMngflQ = survey["q19_7"]
+CitInpQ = survey["q19_8"]
+```
+
+For the EDA, the responses will be grouped into the three. The categorical values for each possible response are as follows:
+
+1: strongly disagree
+2: somewhat disagree
+3: somewhat agree
+4: strongly agree
+5/6: I don't know/No opinion
+
+Now lets visualize this comparison.
+```{r, fig.width=10, fig.height=4}
+# Create subsets based on responses
+Open_agree = OpenAccQ[OpenAccQ$q19_5 == 3 | OpenAccQ$q19_5 == 4, ]
+Open_agree_count = nrow(Open_agree)
+Open_disagree = OpenAccQ[OpenAccQ$q19_5 == 1 | OpenAccQ$q19_5 == 2, ]
+Open_disagree_count = nrow(Open_disagree)
+Open_dontknow = OpenAccQ[OpenAccQ$q19_5 == 5 | OpenAccQ$q19_5 == 6, ]
+Open_dontknow_count = nrow(Open_dontknow)
+
+Mngfl_agree = CitMngflQ[CitMngflQ$q19_7 == 3 | CitMngflQ$q19_7 == 4, ]
+Mngfl_agree_count = nrow(Mngfl_agree)
+Mngfl_disagree = CitMngflQ[CitMngflQ$q19_7 == 1 | CitMngflQ$q19_7 == 2, ]
+Mngfl_disagree_count = nrow(Mngfl_disagree)
+Mngfl_dontknow = CitMngflQ[CitMngflQ$q19_7 == 5 | CitMngflQ$q19_7 == 6, ]
+Mngfl_dontknow_count = nrow(Mngfl_dontknow)
+
+Inp_agree = CitInpQ[CitInpQ$q19_8 == 3 | CitInpQ$q19_8 == 4, ]
+Inp_agree_count = nrow(Inp_agree)
+Inp_disagree = CitInpQ[CitInpQ$q19_8 == 1 | CitInpQ$q19_8 == 2, ]
+Inp_disagree_count = nrow(Inp_disagree)
+Inp_dontknow = CitInpQ[CitInpQ$q19_8 == 5 | CitInpQ$q19_8 == 6, ]
+Inp_dontknow_count = nrow(Inp_dontknow)
+
+# Data frame with all counts
+counts = data.frame(
+  Question = c("Open accessible government", "Open accessible government",
+               "Open accessible government",
+               "Allows citizen input", "Allows citizen input", "Allows citizen input",
+               "Use input in decision-making", "Use input in decision-making",
+               "Use input in decision-making"),
+  Response = c("Agree", "Disagree", "Don't know",
+               "Agree", "Disagree", "Don't know",
+               "Agree", "Disagree", "Don't know"),
+  Count = c(Open_agree_count, Open_disagree_count, Open_dontknow_count, 
+            Mngfl_agree_count, Mngfl_disagree_count, Mngfl_dontknow_count, 
+            Inp_agree_count, Inp_disagree_count, Inp_dontknow_count)
+)
+counts
+
+library(ggplot2)
+
+ggplot(counts, aes(x = Question, y = Count, fill = Response)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  labs(title = "Comparison Between Response Counts", x = "Question", y = "Count") +
+  theme_minimal()
+```
+It is good to see that only a small amounts of participants answered 'don't know'. This will help provide more insightful results for the statistical analysis. 
+
+\vspace{0.4cm}
+
+The following graph illustrates the count of responses of Calgarians across four regions of Calgary. Since we know that Calgary is divided into 4 regions (SW, SE, NW, NE), we can visualize that our data is widely distributed across the regions.
+
+```{r}
+survey$s4qt_factor = factor(survey$s4qt, levels = c(1, 2, 3, 4),
+                            labels = c("SW", "SE", "NW", "NE"))
+
+ggplot(data = survey, aes(x = s4qt_factor,fill = s4qt_factor)) +
+  geom_bar(width=0.6) +
+  labs(x = 'Region', y = 'Count of Respondents',
+       title = 'Count of Respondents by Calgary Region', fill = 'Quadrant') +
+  theme_minimal()
+```
+\vspace{0.4cm}
+
+The following graph illustrates the count of responses of Calgarians who agree with the three questions mentioned above across four regions of Calgary. From the graph we can visualize how many people from different regions agree with the three questions.  
+
+```{r}
+new_df = survey %>%
+  group_by(s4qt) %>%
+  summarise(
+    q19_5_count = sum(q19_5 == 3 | q19_5 == 4),
+    q19_7_count = sum(q19_7 == 3 | q19_7 == 4),
+    q19_8_count = sum(q19_8 == 3 | q19_8 == 4)
+  )
+
+count_agree = data.frame(
+  s4qt = c(new_df$s4qt, new_df$s4qt, new_df$s4qt),
+  Count = c(new_df$q19_5_count, new_df$q19_7_count, new_df$q19_8_count),
+  Question = c('Open Govt', 'Uses Input', 'Allows Input')
+)
+
+count_agree$s4qt_factor = factor(new_df$s4qt, levels = c(1, 2, 3, 4), 
+                                 labels = c("SW", "SE", "NW", "NE"))
+
+ggplot(count_agree, aes(x = s4qt_factor, y = Count, fill = Question)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  labs(title = "Comparison Between Region and Agreement Count",
+       x = "Region", y = "Agreement Count") +
+  theme_minimal()
+```
+
+## STATISTICAL ANALYSIS
+
+As mentioned, the variable of interest would be the response to each one of the three proposed statements in the survey
+
+- **q19_5**: The City of Calgary practices open and accessible government 
+- **q19_8**: The City used input from Calgarians in decision-making about City projects and services
+- **q19_7**: The City allows citizen to have meaningful input into decision-making
+
+The analysis will not be performed for each quadrant since we aim to get a sense of citizen's sentiment as a whole.
+
+**For this analysis, the focus will be on the population parameter of the proportion of Calgarians who agree to each one of the questions.**
+
+Lets start by creating a bootstrap function to use throughout this report. 
+
+```{r}
+One_Sample_BCI <- function(x, s, theta = "mean", B = 2000, alpha=0.05){
+  set.seed(42)
+# x is the data vector
+# s is the function to be applied to the data
+# B is the number of bootstraps to do, B = 2000 for CI and test
+  x = as.vector(x); n = length(x); a = rep(0, B)
+  for (b in 1:B) {
+  bx = sample(x, n, replace = TRUE) 
+  a[b] <- s(bx)
+}
+lo = quantile(a,alpha/2,na.rm=TRUE)
+up = quantile(a,1-alpha/2,na.rm=TRUE)
+bootstrap_df <- data.frame(mean = a)
+
+return(list(bootstrap_df = bootstrap_df, LL = lo, UL = up))
+}
+```
+
+Now lets create a function that will help visualize the difference between the bootstrap and the parametric approach. 
+
+```{r}
+bp_comparison_function = function(LL_parametric,UL_parametric,LL_bootstrap,UL_bootstrap){
+  
+  comparison_df = data.frame(
+  Method = c("Parametric", "Bootstrap"),
+  LL = c(LL_parametric, LL_bootstrap),
+  UL = c(UL_parametric, UL_bootstrap)
+  )
+  
+  # Plotting both confidence intervals on the same graph
+  pl = ggplot(comparison_df, aes(x = Method, ymin = LL, ymax = UL)) +
+    geom_errorbar(width = 0.2) +
+    geom_hline(yintercept = LL_parametric, linetype = "dashed", color = "blue") +  # Parametric LL
+    geom_hline(yintercept = UL_parametric, linetype = "dashed", color = "blue") +  # Parametric UL
+    geom_hline(yintercept = LL_bootstrap, linetype = "dashed", color = "red") +  # Bootstrap LL
+    geom_hline(yintercept = UL_bootstrap, linetype = "dashed", color = "red")   # Bootstrap UL
+  
+  pl2 = pl + ggtitle("Comparison of Parametric and Bootstrap Confidence Intervals") +
+    ylab("Proportion Estimate") +
+    xlab("Method") +
+    theme_minimal() +
+    
+    # Annotate the labels for parametric and bootstrap intervals
+    annotate("text", x = 2, y = UL_parametric + 0.01, label = "Parametric CI", color = "blue") +
+    annotate("text", x = 1, y = UL_bootstrap + 0.01, label = "Bootstrap CI", color = "red")
+  
+  pl2
+}
+```
+
+### Confidence interval estimation
+
+*CONFIDENCE INTERVAL Question 1: The City of Calgary practices open and accessible government*
+
+For the following test, lets start by performing the **parametric approach**. This is because the sample size is much bigger than 30, which according to the Central Limit Theorem, helps approximate the sampling distribution of the proportion to a normal distribution. The bootstrap approach will only be computed as a way to compare, but given the circumstances, the parametric approach is always preferred.  
+
+*Given Data.*
+
+- n1 = number of rows/entries/participants (or Bernoulli trials) for Question 1 
+- x1 = number of successes ('agree') for Question 1
+
+Since the sample size is large, the standard prop.test method can be used
+
+```{r}
+# parametric approach
+x1 = Open_agree_count
+n1 = nrow(survey['q19_5'])
+prop1 = round(x1/n1, 4)
+cat('Proportion of surveyed Calgarians agreeing with the Question 1 is:', prop1)
+```
+
+```{r}
+conf_intervalQ1 = prop.test(x1, n1)$conf
+
+# CI
+LL_parametric_Q1 = format(round(conf_intervalQ1[1],4))  
+UL_parametric_Q1 = format(round(conf_intervalQ1[2], 4)) 
+
+cat('With 95% confidence, the true population proportion of Calgarians who 
+    agree that the City of Calgary practices open and accessible government 
+    is estimated to be between: ', "(", LL_parametric_Q1,',',UL_parametric_Q1,')')
+```
+\vspace{0.4cm}
+**Computing Bootstrap approach and plotting a comparison between bootstrap and parametric**. 
+
+```{r}
+set.seed(42)
+
+# bootstrap approach
+u1 = c(rep(1, x1), rep(0, n1 - x1))
+bootstrap1 = One_Sample_BCI(u1, mean, "proportion")
+
+# Extracting LL and UL from the list
+LL_boot_Q1 = round(bootstrap1$LL, 4)
+UL_boot_Q1 = round(bootstrap1$UL, 4)
+bootstrap_Q1 = bootstrap1$bootstrap_df
+
+# plotting the bootstrap distribution with upper and lower limit
+ggplot(data = bootstrap_Q1, aes(x = mean)) +
+  geom_histogram(bins=30,color = "black", fill = "lightblue") +
+  xlab("Values of Bootstrap Proportion") +
+  ylab("Count") +
+  ggtitle("Distribution of Bootstrap Statistic: Sample Proportion") +
+  geom_vline(xintercept = LL_boot_Q1, color = "red") +
+  geom_vline(xintercept = UL_boot_Q1, color = "red")
+  
+cat('The 95% confidence interval using the bootstrap approach for the 
+    proportion of Calgarians who agree that the City of Calgary practices 
+    open and accessible government is estimated to be between: ', 
+    "(", LL_boot_Q1,',',UL_boot_Q1,')')
+
+```
+\vspace{0.4cm}
+**Plotting a comparative graph between the bootstrap and parametric confidence**. 
+
+```{r}
+LL_boot_Q1 = as.numeric(LL_boot_Q1)
+UL_boot_Q1 = as.numeric(UL_boot_Q1)
+LL_parametric_Q1 = as.numeric(LL_parametric_Q1)
+UL_parametric_Q1 = as.numeric(UL_parametric_Q1)
+
+bp_comparison_function(LL_parametric_Q1,UL_parametric_Q1,LL_boot_Q1,UL_boot_Q1)
+```
+
+*CONFIDENCE INTERVAL Question 2: The City allows citizens to have meaningful input into decision-making*
+
+*Given Data.*
+
+- n2 = number of rows/entries/participants (or Bernoulli trials) for Question 2 
+- x2 = number of successes ('agree') for Question 2
+
+```{r}
+# parametric approach
+x2 = Mngfl_agree_count
+n2 = nrow(survey['q19_7'])
+prop2 = round(x2/n2, 4)
+cat('Proportion of surveyed Calgarians agreeing with the Question 2 is:', prop2)
+```
+
+```{r}
+conf_intervalQ2 = prop.test(x2, n2)$conf
+
+# CI
+LL_parametric_Q2 = format(round(conf_intervalQ2[1],4))  
+UL_parametric_Q2 = format(round(conf_intervalQ2[2], 4)) 
+
+cat('With 95% confidence, the true population proportion of Calgarians who 
+    agree that the City allows citizen to have meaningful input into 
+    decision-making is estimated to be between: ', "(", LL_parametric_Q2,',
+    ',UL_parametric_Q2,')')
+```
+\vspace{0.4cm}
+**Computing Bootstrap approach and plotting a comparison between bootstrap and parametric**. 
+
+```{r}
+set.seed(42)
+
+# bootstrap approach
+u2 = c(rep(1, x2), rep(0, n2 - x2))
+bootstrap2 = One_Sample_BCI(u2, mean, "proportion")
+
+# Extracting LL and UL from the list
+LL_boot_Q2 = round(bootstrap2$LL, 4)
+UL_boot_Q2 = round(bootstrap2$UL, 4)
+bootstrap_Q2 = bootstrap2$bootstrap_df
+
+# plotting the bootstrap distribution with upper and lower limit
+ggplot(data = bootstrap_Q2, aes(x = mean)) +
+  geom_histogram(bins=30,color = "black", fill = "lightblue") +
+  xlab("Values of Bootstrap Proportion") +
+  ylab("Count") +
+  ggtitle("Distribution of Bootstrap Statistic: Sample Proportion") +
+  geom_vline(xintercept = LL_boot_Q2, color = "red") +
+  geom_vline(xintercept = UL_boot_Q2, color = "red")
+
+cat('The 95% confidence interval using the bootstrap approach for the proportion 
+    of Calgarians agree that the City allows citizen to have meaningful input 
+    into decision-making is estimated to be between: ', "(", LL_boot_Q2,','
+    ,UL_boot_Q2,')')
+
+```
+\vspace{0.4cm}
+**Plotting a comparative graph between the bootstrap and parametric confidence**. 
+
+```{r}
+LL_boot_Q2 = as.numeric(LL_boot_Q2)
+UL_boot_Q2 = as.numeric(UL_boot_Q2)
+LL_parametric_Q2 = as.numeric(LL_parametric_Q2)
+UL_parametric_Q2 = as.numeric(UL_parametric_Q2)
+
+bp_comparison_function(LL_parametric_Q2,UL_parametric_Q2,LL_boot_Q2,UL_boot_Q2)
+```
+
+*CONFIDENCE INTERVAL Question 3: The City used input from Calgarians in decision-making about City projects and services*
+
+*Given Data.*
+
+- n3 = number of rows/entries/participants (or Bernoulli trials) for Question 3 
+- x3 = number of successes ('agree') for Question 3
+
+```{r}
+# parametric approach
+x3 = Inp_agree_count
+n3 = nrow(survey['q19_8'])
+prop3 = round(x3/n3, 4)
+cat('Proportion of surveyed Calgarians agreeing with the Question 2 is:', prop3)
+```
+
+```{r}
+conf_intervalQ3 = prop.test(x3, n3)$conf
+
+# CI
+LL_parametric_Q3 = format(round(conf_intervalQ3[1],4))  
+UL_parametric_Q3 = format(round(conf_intervalQ3[2], 4)) 
+
+cat('With 95% confidence, the true population proportion of Calgarians who 
+    agree that the City used input from Calgarians in decision-making about 
+    City projects and services is estimated to be between: ', "(", 
+    LL_parametric_Q3,',',UL_parametric_Q3,')')
+```
+\vspace{0.4cm}
+**Computing Bootstrap approach and plotting a comparison between bootstrap and parametric**. 
+
+```{r}
+set.seed(42)
+
+# bootstrap approach
+u3 = c(rep(1, x3), rep(0, n3 - x3))
+bootstrap3 = One_Sample_BCI(u3, mean, "proportion")
+
+# Extracting LL and UL from the list
+LL_boot_Q3 = round(bootstrap3$LL, 4)
+UL_boot_Q3 = round(bootstrap3$UL, 4)
+bootstrap_Q3 = bootstrap3$bootstrap_df
+
+# plotting the bootstrap distribution with upper and lower limit
+ggplot(data = bootstrap_Q3, aes(x = mean)) +
+  geom_histogram(bins=30,color = "black", fill = "lightblue") +
+  xlab("Values of Bootstrap Proportion") +
+  ylab("Count") +
+  ggtitle("Distribution of Bootstrap Statistic: Sample Proportion") +
+  geom_vline(xintercept = LL_boot_Q3, color = "red") +
+  geom_vline(xintercept = UL_boot_Q3, color = "red")
+
+cat('The 95% confidence interval using the bootstrap approach for the proportion 
+    of Calgarians agree that the City allows citizen to have meaningful input 
+    into decision-making is estimated to be between: ', "(", LL_boot_Q3,',',
+    UL_boot_Q3,')')
+```
+\vspace{0.4cm}
+**Plotting a comparative graph between the bootstrap and parametric confidence**. 
+
+```{r}
+LL_boot_Q3 = as.numeric(LL_boot_Q3)
+UL_boot_Q3 = as.numeric(UL_boot_Q3)
+LL_parametric_Q3 = as.numeric(LL_parametric_Q3)
+UL_parametric_Q3 = as.numeric(UL_parametric_Q3)
+
+bp_comparison_function(LL_parametric_Q3,UL_parametric_Q3,LL_boot_Q3,UL_boot_Q3)
+```
+
+### Single Sample Proportion Tests
+
+The latest report from the 2024 Spring Survey states that "Two-thirds (63%) of Calgarians are satisfied with the overall level and quality of services and programs offered by The City of Calgary"
+file:///C:/Users/chart/Downloads/2024-Spring-Survey-of-Calgarians-Final-Report.pdf
+
+Using this statistic, lets test the hypothesis that, for each of our chosen statements assessing the City of Calgary's performance with citizen input, the proportion of Calgarians that agree will be less than the general satisfaction with City services and programs reported for Spring of 2024. That is,
+
+Null hypothesis: the proportion of Calgarians who agree that the aforementioned statement is equal to 63%:
+$$H_0: p = 0.63$$
+
+Alternative hypothesis: the proportion of Calgarians who agree that the aforementioned statement was less than 63% in 2023:
+$$H_a: p < 0.63$$
+
+Lets begin by using the following Z-test formula 
+
+\[
+z = \frac{\hat{p} - p_0}{\sqrt{\frac{p_0(1 - p_0)}{n}}}
+\]
+
+\vspace{0.4cm}
+
+**Question 1: The City of Calgary practices open and accessible government**
+
+Proportion for Q1 (variables have been defined earlier).
+
+```{r}
+p_hat1 = x1 / n1
+p_hat1
+```
+Since the sample size of n = 2500, np = 1443 >= 10, and n(1-p) = 1057 >= 10, we can use normal distribution to conduct approximate test for population. 
+
+```{r}
+p0 = 0.63      
+
+# Z-Test
+z_test1 = (p_hat1 - p0) / sqrt((p0 * (1 - p0)) / n1)
+
+# Calculate the p-value (left tailed test)
+p_value1 =  (pnorm(z_test1))
+
+cat("Z-test statistic:", z_test1, "\n")
+cat("P-value:", p_value1, "\n")
+
+```
+P-value < alpha (0.05) -> Reject the null hypothesis.
+
+Since P-value is less than alpha, reject the null hypothesis. Thus, there is strong evidence to conclude that the proportion of Calgarians who agree that the City of Calgary practices open and accessible government is likely less than 63%.
+
+\vspace{0.4cm}
+
+**Question 2: The City allows citizens to have meaningful input into decision-making**
+
+Proportion for Q2 (variables have been defined earlier).
+
+```{r}
+p_hat2 = x2 / n2
+p_hat2
+```
+Once more, the proportion of Question 2, meets the requirements to conduct a z-test (np = 1183 >= 10, and n(1-p) = 1317 >= 10). 
+
+```{r}
+# Z-Test
+z_test2 = (p_hat2 - p0) / sqrt((p0 * (1 - p0)) / n2)
+
+# Calculate the p-value (left tailed test)
+p_value2 =(pnorm(z_test2))
+
+# Output the results
+cat("Z-test statistic:", z_test2, "\n")
+cat("P-value:", p_value2, "\n")
+```
+P-value < alpha (0.05) -> Reject the null hypothesis.
+
+Since P-value is less than alpha, reject the null hypothesis. Thus, there is strong evidence to conclude that the proportion of Calgarians who agree that the City allows citizens to have meaningful input into decision-making is likely less than 63%.
+
+\vspace{0.4cm}
+
+**Question 3: The City used input from Calgarians in decision-making about City projects and services**
+
+Proportion for Q3 (variables have been defined earlier).
+
+```{r}
+p_hat3 = x3 / n3
+p_hat3
+```
+Finally, we corroborate that the last proportion for question 3, meets the requirements to conduct a z-test (np = 1261 >= 10, and n(1-p) = 1239 >= 10).
+
+```{r}
+# Z-Test
+z_test3 = (p_hat3 - p0) / sqrt((p0 * (1 - p0)) / n3)
+
+# Calculate the p-value (left tailed test)
+p_value3 = (pnorm(z_test3))
+
+# Output the results
+cat("Z-test statistic:", z_test3, "\n")
+cat("P-value:", p_value3, "\n")
+```
+P-value < alpha (0.05) -> Reject the null hypothesis.
+
+Since P-value is less than alpha, reject the null hypothesis. Thus, there is strong evidence to conclude that the proportion of Calgarians who agree that the City used input from Calgarians in decision-making about City projects and services is likely less than 63%.
+
+### Two Sample Proportion Tests
+
+In the following section we will perform several two-sample test for comparing two population proportions (p1 - p2), with the intention to find out the differences between the proportion of Calgarians who agreed to the 3 posed questions. 
+
+**Proportion comparison between Calgarians who agree that the City used input from citizens in decision-making about City projects and service VS those who agree that the City allows citizens to have meaningful input into decision making.**
+
+One question looks at whether citizens are able to provide input to the City compared to whether they City actually uses this input in their decisions. We are going to create a hypothesis that tests whether these proportions are different.  
+
+$H_0: p_{use-input} = p_{provide-input}$  VS $H_1:p_{use-input} \neq p_{provide-input}$  
+
+Variables that have already been defined in the code above are restated here for reference.
+
+x3 = Inp_agree_count
+n3 = nrow(survey['q19_8'])
+
+x2 = Mngfl_agree_count
+n2 = nrow(survey['q19_7'])
+```{r}
+prop.test(c(x3,x2), c(n3,n2), 
+          alternative = "two.sided",correct=FALSE)
+```
+True difference between proportions with 95% confidence is estimated between 0.003502376 0.058897624.
+P-value (0.02733) < alpha (0.05), thus we reject the null hypothesis.
+
+**Proportion comparison between Calgarians who agree that the City used input from citizens in decision-making about City projects and service VS those who agree that the City practices open and accessible government.**
+
+Once more, we are going to create a hypothesis that tests whether these proportions are different.  
+
+$H_0: p_{use-input} = p_{open-govt}$  VS $H_1:p_{use-input} \neq p_{open-govt}$  
+
+Variables that have already been defined in the code above are restated here for reference.
+
+x3 = Inp_agree_count
+n3 = nrow(survey['q19_8'])
+
+x1 = Open_agree_count
+n1 = nrow(survey['q19_5'])
+
+```{r}
+prop.test(c(x3,x1), c(n3,n1), 
+          alternative = "two.sided",correct=FALSE)
+```
+True difference between proportions with 95% confidence is estimated between -0.10035185 -0.04524815
+P-value (2.405e-07) < alpha (0.05), thus we reject the null hypothesis.
+
+**Proportion comparison between Calgarians who agree that the City allows citizens to have meaningful input into decision making VS the those who believe that the City practices open and accessible government.**
+
+Testing whether these proportions are different. 
+
+$H_0: p_{provide-input} = p_{open-govt}$  VS $H_1:p_{provide-input} \neq p_{open-govt}$  
+
+x2 = Mngfl_agree_count
+n2 = nrow(survey['q19_7'])
+
+x1 = Open_agree_count
+n1 = nrow(survey['q19_5'])
+
+```{r}
+prop.test(c(x2,x1), c(n2,n1), 
+          alternative = "two.sided",correct=FALSE)
+```
+True difference between proportions with 95% confidence is estimated between -0.13153235 -0.07646765
+P-value (1.795e-13) < alpha (0.05), thus we reject the null hypothesis.
+
+## CONCLUSION
+
+**CONFIDENCE INTERVALS**
+
+We provide a confidence interval to state the possible range of values the true population proportion is estimated to fall into. This means that with 95% certainty the true value will fall in between that interval but we can't state where exactly it will fall within the range. If we were to take many samples and calculate each confidence interval, we assume that around 95% of the intervals would contain the true population proportion. 
+
+\vspace{0.4cm}
+
+**95% Confidence Interval for Q1: The City of Calgary practices open and accessible government**
+
+*Parametric Approach*
+
+With 95% confidence, the true population proportion of Calgarians who agree that the City of Calgary practices open and accessible government is estimated to be between 55.75% and 59.66%. 
+
+We believe this proportion to demonstrate a respectable proportion of Calgarians agreeing with the proposed question. A 56% to 60% proportion shows that the majority of Calgarians believes the City is practicing good government that is open and accessible towards its citizens. 
+
+*Bootstrap Approach*
+
+The 95% confidence interval using the bootstrap approach for the proportion of Calgarians who agree that the City of Calgary practices open and accessible government is estimated to be between 55.88% and 59.6%.
+
+*Comparing Parametric VS Bootstrap*
+
+Judging from the plot, we can see that the bootstrap interval was very close. The parametric approach is always recommended for cases like these, but the bootstrap provided a very good approximation.  
+
+\vspace{0.4cm}
+
+**95% Confidence Interval for Q2: The City allows citizens to have meaningful input into decision-making.**
+
+*Parametric Approach*
+
+With 95% confidence, the true population proportion of Calgarians who agree that the City allows citizen to have meaningful input into decision-making is estimated to be between 45.35% and 49.3%.
+
+We can see that a bit less than half of Calgarians agrees to the question. While we are not aware of the values that the City considers critical, from our perspective, it would be better for the proportion of Calgarians who believe that they can provide meaningful input to be more than half. 
+
+*Bootstrap Approach*
+
+The 95% confidence interval using the bootstrap approach for the proportion of Calgarians agree that the City allows citizen to have meaningful input into decision-making is estimated to be between 45.44% and 49.28%.
+
+*Comparing Parametric VS Bootstrap*
+
+The Bootstrap approach approximated the Parametric approach very closely. 
+
+\vspace{0.4cm}
+
+**95% Confidence Interval for Q3: The City used input from Calgarians in decision-making about City projects and service.**
+
+*Parametric Approach*
+
+With 95% confidence, the true population proportion of Calgarians who agree that the City used input from Calgarians in decision-making about City projects and services is estimated to be between 48.46% and 52.42%.
+
+While this interval is centered around 50%, it is good to see that it is a bit higher than the previous one. This question and the previous one go hand in hand. One asks whether citizens feel like the government allows for input and the other focuses on whether this input is being used. We would like to see both confidence intervals to be higher than 50%, perhaps a 55%-60% (similar to the first question would be adequate).  
+
+All kinds of government need citizen input and participation, and when this dynamic doesn't work the party in power should be wary that they might be voted out in the following term. 
+
+*Bootstrap Approach*
+
+The 95% confidence interval using the bootstrap approach for the proportion of Calgarians agree that the City allows citizen to have meaningful input into decision-making is estimated to be between 48.56% and 52.32%.
+
+*Comparing Parametric VS Bootstrap*
+
+Once more, we see that the bootstrap approach with 2000 bootstraps is a good method to approximate these proportions. 
+
+\vspace{0.4cm}
+
+**SINGLE PARAMETRIC SAMPLE PROPOPRTION HYPOTHESIS TEST**
+
+These tests were all conducted against the stat found in the Spring 2024 Calgary survey that said that 63% of Calgarians are satisfied with the City of Calgary. Although we are not exactly sure what variables and factors were used to compute this 63%, our question selection aimed to get similar insight. Therefore, we tested each of our questions to see if the proportion was lower than 63% in 2023, thus telling us if the proportion has gone up from the Fall of 2023 to the Spring of 2024. 
+
+\vspace{0.4cm}
+
+***Q1:The City of Calgary practices open and accessible government***
+
+The test results demonstrate that P value is extremely small (almost 0), much smaller than alpha 0.05, thus, rejecting the null hypothesis. Therefore, there is significant evidence to conclude that the proportion of Calgarians who agree that the City practices open and accessible government was less than 63% in 2023. 
+
+While we cannot directly compare our test with the 2024 proportion of (63%) because they are not measuring the exact same variable, it does provide a bit of insight telling us that if the proportion of Calgarians who agree that the the City practices open and accessible government was lower than 63% in 2023, if this was one of the factors in determining that 63%, there is a possibility that it might have gone up for the Spring of 2024. 
+
+\vspace{0.4cm}
+
+***Q2: The City allows citizens to have meaningful input into decision-making.***
+
+Again, the P value is approaching 0, thus rejecting the null hypothesis. There is concluding evidence to suggest that the proportion of Calgarians who agree that the City allows citizens to have meaningful input into decision-making was also lower than 63%. 
+
+Once more, we can provide a similar analysis to the previous question. If this individual question was used in the computation of the 63% in 2024, we can speculate that there might've been an increase from the Fall of 2023 to Spring of 2024. 
+
+\vspace{0.4cm}
+
+***Q3: The City used input from Calgarians in decision-making about City projects and services.***
+
+For the third time, the P value is approximately 0,which is lower than alpha rejecting the null hypothesis. We can conclude that there is definitive evidence to suggest that the proportion of Calgarians who agree that the City uses input from citizens in decision-making about City projects and services was definitely lower than 63%. 
+
+While according to the stat that 63% of Calgarians satisfied with the City's services and programs, all of the questions that we looked into have a smaller proportion to the statement made by the City in the Spring of 2024. 
+While we would like to believe that this is because these three questions, along with a number of others, were used to compute the 63% in the Spring of 2024, therefore getting higher proportions of 'agrees' to each question in 2024 demonstrating an increase from Fall 2023 to Spring 2024, it is not possible for us to make this conclusion. 
+
+\vspace{0.4cm}
+
+**TWO SAMPLE PARAMETRIC PROPOPRTION HYPOTHESIS TEST**. 
+
+\vspace{0.4cm}
+
+***Proportion comparison between Calgarians who agree that the City used input from citizens in decision-making about City projects and service VS those who agree that the City allows citizens to have meaningful input into decision making.***
+
+We can say with 95% confidence that the true difference between the population proportion of Calgarians who agree that the City used input from citizens in decision-making about City projects and service and the proportion of those who agree that the City allows citizens to have meaningful input into decision making is estimated to lie between 0.0035 and 0.0589.
+
+This suggests that Calgarians who believe that the City used citizen input is estimated to between 0.35% and 5.89% more than those who believe that the City is open to receive this input from citizens. 
+
+Examining the p-value, we see that it is 0.02, and therefore smaller than alpha (0.05). Consequently, we can reject the null hypothesis saying that the proportions are the same. Hence we can say that there is a difference in the proportion of Calgarians who agree that the City allows citizens to provide input for future projects and services compared to the proportion of those who believe that the City actually uses this input. 
+
+This is interesting insight, because if more Calgarians believe that the City uses citizen input compared to those who believe that the City is open to receiving input and feedback, then there seems to be some kind of disconnect because the process involves receiving input first, and putting into practice second. If we speculate, maybe this comes from the perception that while the City is open to receiving input and feedback they might be prone to implementing input from a certain subset of Calgarians more than others. 
+
+\vspace{0.4cm}
+
+***Proportion comparison between Calgarians who agree that the City used input from citizens in decision-making about City projects and service VS those who agree that the City practices open and accessible government.***
+
+With 95% confidence the true difference between the population proportion of Calgarians who agree that the City used input from citizens in decision-making about City projects and service and the proportion of those who agree that the City practices open and accessible government is estimated to lie between -0.1004 and -0.0452.
+
+This suggests that Calgarians who believe that the City used citizen input is estimated to between 4.52% and 10.04% less than those who believe that the City is reachable, accessible, and open with it's practices. 
+
+The p-value of 2.405e-07 is very small and definitely smaller than alpha, therefore rejecting the null hypothesis stating that the proportions are the same. Once more, we can say that there is a difference in proportions.
+
+With this test we learn a bit more about Calgarians' perception but again we are faced with a sort of paradox. More Calgarians believe that the City is open and accessible than those who believe that the City uses citizen input. One would think that if the City was perceived as open and accessible, it probably meant that the City is using citizen input. There might be a general belief that the city is accessible, but the Calgarians who actually engage with the government might have a different opinion than the general public.  
+
+\vspace{0.4cm}
+
+***Proportion comparison between Calgarians who agree that the City allows citizens to have meaningful input into decision making VS the those who believe that the City practices open and accessible government.***
+
+With 95% confidence the true difference between the population proportion of Calgarians who agree that the City allows citizens to have meaningful input into decision making and those who think that the City practices open and accessible government is estimated to lie between -0.1315 and -0.0765.
+
+In other words, Calgarians who believe that the City allows citizens to provide input for decision-making is estimated to be between 7.65% and 13.25% less than Calgarians who think that the city is open and accessible. 
+
+One more time, the p-value of 1.795e-13 is smaller than alpha, thus rejecting the null hypothesis stating that the proportions are the same. One last time, we can say that there is a difference in proportions.
+
+Having performed these three tests, we can see that over all, the perception that the City practices open and accessible government is the highest proportion when compared to the other two tested. It would be interesting to investigate the reason why there is a greater proportion Calgarians who believe the City to practice open and accessible government while having lower proportions agreeing to citizen input and implementation. It would be good insight to explore what Calgarians consider to be "open and accessible government practice". There could be a variety of reasons, maybe it might mean that the City is considered to be transparent about what they do and who they work with, but considered less prone to work directly with citizen input.
+
+Finally, we have to remember that these tests are focusing on the proportion of Calgarians that agrees VS those who do not agree (which is not the same as agree VS disagree). There is a proportion that answered 'don't know' that is being grouped with the complement of the proportion who agrees, therefore the complements of our proportions are not fully representative of the proportion of Calgarians that disagree to each question. 
+
+## LEARNINGS
+
+The biggest learning for us was learning how to select a good topic and data set. As discussed in the DATA COLLECTION section, this was a huge challenge, but after going through this project we feel better equipped in the future to be quicker to disregard useless data sets and focus specifically on the ones that might be of use. 
+
+We learned how to apply the material covered in class to a real-life topic, and it was good practice to go from the notes to reality where other factors have to be considered. It was interesting to think how to provide real-life interpretations to our statistical analysis, and while we cannot provide definitive conclusions for most of them, it is good practice to try and speculate why we got the results we did.
+
+From the topic itself, we learned that the city of Calgary seems to be divided almost by half as to the proportion of Citizens who agree with the City (or at least focusing on our three questions of interest). While Alberta is a conservative province, the City of Calgary tends to be more progressive, and it was intriguing to find out about these proportions. 
+
+## REFERENCES
+
+Calgary, C. O. (2023, October 17). Fall survey of Calgarians shows satisfaction with City. Fall Survey of Calgarians Shows Satisfaction With City. https://newsroom.calgary.ca/fall-survey-of-calgarians-shows-satisfaction-with-city/
+
+Ipsos Public Affairs. (2023). ISC: Unrestricted 2023 Fall Survey of Calgarians [Report]. https://www.calgary.ca/content/dam/www/cfod/csc/documents/cit-sat/cit-sat-2023/2023-fall-survey-of-calgarians.pdf
+
+Prabhakaran, S. (n.d.). Top 50 ggplot2 Visualizations - The Master List (With Full R Code). https://r-statistics.co/Top50-Ggplot2-Visualizations-MasterList-R-Code.html#Scatterplot%20With%20Encircling
+
+Vertical intervals: lines, crossbars & errorbars — geom_crossbar. (n.d.). https://ggplot2.tidyverse.org/reference/geom_linerange.html
+
+This whole report was created with Rstudio
+
+DATA 602 class notes and documents provided by Dr. Chen
